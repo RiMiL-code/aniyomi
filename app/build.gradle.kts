@@ -1,3 +1,5 @@
+// Import necessary files (These imports are not needed directly in the build.gradle.kts file,
+// but if you're using custom build logic, they should be in a separate .gradle or .kts file)
 import mihon.buildlogic.getBuildTime
 import mihon.buildlogic.getCommitCount
 import mihon.buildlogic.getGitSha
@@ -9,8 +11,45 @@ plugins {
     id("com.github.zellius.shortcut-helper")
     kotlin("plugin.serialization")
     alias(libs.plugins.aboutLibraries)
+    id("com.android.application") // You have both plugin blocks; let's keep both
+    kotlin("android") // This is equivalent to 'kotlin-android'
 }
 
+android {
+    compileSdkVersion(34)
+    
+    defaultConfig {
+        applicationId = "xyz.jmir.tachiyomi.mi"
+        minSdkVersion(21)
+        targetSdkVersion(34)
+        versionCode = 1
+        versionName = "1.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+}
+
+dependencies {
+    // Required dependencies for PDF and ePub
+    implementation("com.github.barteksc:android-pdf-viewer:3.2.0-beta.1")
+    implementation("nl.siegmann.epublib:epublib-core:3.1")
+
+    // Other dependencies...
+    implementation("androidx.appcompat:appcompat:1.3.1")
+    implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.21")
+
+    // Optional dependencies (custom plugins you included)
+    implementation(libs.android.shortcut.gradle) // If using libraries from 'libs'
+}
 shortcutHelper.setFilePath("./shortcuts.xml")
 
 @Suppress("PropertyName")
